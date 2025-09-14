@@ -1,7 +1,4 @@
 // @vitest-environment node
-import { describe, expect, it, vi } from 'vitest';
-
-import { ClientSecretPayload } from '@/const/auth';
 import {
   LobeAnthropicAI,
   LobeAzureOpenAI,
@@ -17,19 +14,20 @@ import {
   LobeOpenRouterAI,
   LobePerplexityAI,
   LobeQwenAI,
-  LobeRuntimeAI,
+  LobeStepfunAI,
   LobeTogetherAI,
   LobeZeroOneAI,
   LobeZhipuAI,
   ModelProvider,
-} from '@/libs/model-runtime';
-import { ModelRuntime } from '@/libs/model-runtime';
-import { LobeStepfunAI } from '@/libs/model-runtime/stepfun';
+  ModelRuntime,
+} from '@lobechat/model-runtime';
+import { ClientSecretPayload } from '@lobechat/types';
+import { describe, expect, it, vi } from 'vitest';
 
 import { initModelRuntimeWithUserPayload } from './index';
 
 // 模拟依赖项
-vi.mock('@/config/llm', () => ({
+vi.mock('@/envs/llm', () => ({
   getLLMConfig: vi.fn(() => ({
     // 确保为每个provider提供必要的配置信息
     OPENAI_API_KEY: 'test-openai-key',
@@ -60,14 +58,17 @@ vi.mock('@/config/llm', () => ({
 
 /**
  * Test cases for function initModelRuntimeWithUserPayload
- * this method will use ModelRuntime from `@/libs/model-runtime`
+ * this method will use ModelRuntime from `@lobechat/model-runtime`
  * and method `getLlmOptionsFromPayload` to initialize runtime
  * with user payload. Test case below will test both the methods
  */
 describe('initModelRuntimeWithUserPayload method', () => {
   describe('should initialize with options correctly', () => {
     it('OpenAI provider: with apikey and endpoint', async () => {
-      const jwtPayload: ClientSecretPayload = { apiKey: 'user-openai-key', baseURL: 'user-endpoint' };
+      const jwtPayload: ClientSecretPayload = {
+        apiKey: 'user-openai-key',
+        baseURL: 'user-endpoint',
+      };
       const runtime = await initModelRuntimeWithUserPayload(ModelProvider.OpenAI, jwtPayload);
       expect(runtime).toBeInstanceOf(ModelRuntime);
       expect(runtime['_runtime']).toBeInstanceOf(LobeOpenAI);

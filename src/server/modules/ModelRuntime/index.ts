@@ -1,6 +1,7 @@
-import { getLLMConfig } from '@/config/llm';
-import { ClientSecretPayload } from '@/const/auth';
-import { ModelProvider, ModelRuntime } from '@/libs/model-runtime';
+import { ModelProvider, ModelRuntime } from '@lobechat/model-runtime';
+import { ClientSecretPayload } from '@lobechat/types';
+
+import { getLLMConfig } from '@/envs/llm';
 
 import apiKeyManager from './apiKeyManager';
 

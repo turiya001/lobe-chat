@@ -1,17 +1,17 @@
-import { ChatErrorType } from '@lobechat/types';
-
-import { checkAuth } from '@/app/(backend)/middleware/auth';
 import {
   AGENT_RUNTIME_ERROR_SET,
   ChatCompletionErrorPayload,
   ModelRuntime,
-} from '@/libs/model-runtime';
+} from '@lobechat/model-runtime';
+import { ChatErrorType } from '@lobechat/types';
+
+import { checkAuth } from '@/app/(backend)/middleware/auth';
 import { createTraceOptions, initModelRuntimeWithUserPayload } from '@/server/modules/ModelRuntime';
 import { ChatStreamPayload } from '@/types/openai/chat';
 import { createErrorResponse } from '@/utils/errorResponse';
 import { getTracePayload } from '@/utils/trace';
 
-export const runtime = 'edge';
+export const maxDuration = 300;
 
 export const POST = checkAuth(async (req: Request, { params, jwtPayload, createRuntime }) => {
   const { provider } = await params;

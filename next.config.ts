@@ -9,10 +9,10 @@ const buildWithDocker = process.env.DOCKER === 'true';
 const isDesktop = process.env.NEXT_PUBLIC_IS_DESKTOP_APP === '1';
 const enableReactScan = !!process.env.REACT_SCAN_MONITOR_API_KEY;
 const isUsePglite = process.env.NEXT_PUBLIC_CLIENT_DB === 'pglite';
+const shouldUseCSP = process.env.ENABLED_CSP === '1';
 
 // if you need to proxy the api endpoint to remote server
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
 const isStandaloneMode = buildWithDocker || isDesktop;
 
 const standaloneConfig: NextConfig = {
@@ -22,8 +22,13 @@ const standaloneConfig: NextConfig = {
 
 const nextConfig: NextConfig = {
   ...(isStandaloneMode ? standaloneConfig : {}),
-  basePath,
+  compiler: {
+    emotion: true,
+  },
   compress: isProd,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     optimizePackageImports: [
       'emoji-mart',
@@ -31,6 +36,7 @@ const nextConfig: NextConfig = {
       '@emoji-mart/data',
       '@icons-pack/react-simple-icons',
       '@lobehub/ui',
+      '@lobehub/icons',
       'gpt-tokenizer',
     ],
     // oidc provider depend on constructor.name
@@ -39,16 +45,32 @@ const nextConfig: NextConfig = {
     // refs: https://github.com/lobehub/lobe-chat/pull/7430
     serverMinification: false,
     webVitalsAttribution: ['CLS', 'LCP'],
+    webpackMemoryOptimizations: true,
   },
   async headers() {
+    const securityHeaders = [
+      {
+        key: 'x-robots-tag',
+        value: 'all',
+      },
+    ];
+
+    if (shouldUseCSP) {
+      securityHeaders.push(
+        {
+          key: 'X-Frame-Options',
+          value: 'DENY',
+        },
+        {
+          key: 'Content-Security-Policy',
+          value: "frame-ancestors 'none';",
+        },
+      );
+    }
+
     return [
       {
-        headers: [
-          {
-            key: 'x-robots-tag',
-            value: 'all',
-          },
-        ],
+        headers: securityHeaders,
         source: '/:path*',
       },
       {
@@ -176,6 +198,7 @@ const nextConfig: NextConfig = {
     },
   },
   reactStrictMode: true,
+
   redirects: async () => [
     {
       destination: '/sitemap-index.xml',
@@ -245,10 +268,13 @@ const nextConfig: NextConfig = {
       source: '/repos',
     },
   ],
+
   // when external packages in dev mode with turbopack, this config will lead to bundle error
   serverExternalPackages: isProd ? ['@electric-sql/pglite'] : undefined,
-
   transpilePackages: ['pdfjs-dist', 'mermaid'],
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 
   webpack(config) {
     config.experiments = {

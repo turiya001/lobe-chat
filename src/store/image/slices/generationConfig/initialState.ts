@@ -1,11 +1,11 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix, typescript-sort-keys/interface */
-import { gptImage1ParamsSchema } from '@/config/aiModels/openai';
-import { ModelProvider } from '@/libs/model-runtime/types/type';
+import { ModelProvider } from '@lobechat/model-runtime';
 import {
   ModelParamsSchema,
   RuntimeImageGenParams,
   extractDefaultValues,
-} from '@/libs/standard-parameters/index';
+  gptImage1ParamsSchema,
+} from 'model-bank';
 
 export const DEFAULT_AI_IMAGE_PROVIDER = ModelProvider.OpenAI;
 export const DEFAULT_AI_IMAGE_MODEL = 'gpt-image-1';
@@ -21,6 +21,11 @@ export interface GenerationConfigState {
 
   isAspectRatioLocked: boolean;
   activeAspectRatio: string | null; // string - 虚拟比例; null - 原生比例
+
+  /**
+   * 标记配置是否已初始化（包括从记忆中恢复）
+   */
+  isInit: boolean;
 }
 
 export const DEFAULT_IMAGE_GENERATION_PARAMETERS: RuntimeImageGenParams =
@@ -34,4 +39,5 @@ export const initialGenerationConfigState: GenerationConfigState = {
   parametersSchema: gptImage1ParamsSchema,
   isAspectRatioLocked: false,
   activeAspectRatio: null,
+  isInit: false,
 };

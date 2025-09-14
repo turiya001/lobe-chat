@@ -1,19 +1,22 @@
 import { AuthObject } from '@clerk/backend';
-import { ChatErrorType } from '@lobechat/types';
+import {
+  AgentRuntimeError,
+  ChatCompletionErrorPayload,
+  ModelRuntime,
+} from '@lobechat/model-runtime';
+import { ChatErrorType, ClientSecretPayload } from '@lobechat/types';
+import { getXorPayload } from '@lobechat/utils/server';
 import { NextRequest } from 'next/server';
 
 import {
-  ClientSecretPayload,
   LOBE_CHAT_AUTH_HEADER,
   LOBE_CHAT_OIDC_AUTH_HEADER,
   OAUTH_AUTHORIZED,
   enableClerk,
 } from '@/const/auth';
 import { ClerkAuth } from '@/libs/clerk-auth';
-import { AgentRuntimeError, ChatCompletionErrorPayload, ModelRuntime } from '@/libs/model-runtime';
 import { validateOIDCJWT } from '@/libs/oidc-provider/jwt';
 import { createErrorResponse } from '@/utils/errorResponse';
-import { getXorPayload } from '@/utils/server/xor';
 
 import { checkAuthMethod } from './utils';
 

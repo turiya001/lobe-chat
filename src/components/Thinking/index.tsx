@@ -1,3 +1,4 @@
+import { ChatCitationItem } from '@lobechat/types';
 import { ActionIcon, CopyButton, Icon, Markdown, ScrollShadow } from '@lobehub/ui';
 import { createStyles } from 'antd-style';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -6,8 +7,6 @@ import { rgba } from 'polished';
 import { CSSProperties, RefObject, memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
-
-import { CitationItem } from '@/types/message';
 
 const useStyles = createStyles(({ css, token }) => ({
   container: css`
@@ -74,7 +73,7 @@ const useStyles = createStyles(({ css, token }) => ({
 }));
 
 interface ThinkingProps {
-  citations?: CitationItem[];
+  citations?: ChatCitationItem[];
   content?: string;
   duration?: number;
   style?: CSSProperties;
@@ -102,7 +101,7 @@ const Thinking = memo<ThinkingProps>((props) => {
 
     // 仅当用户接近底部时才自动滚动，避免打断用户查看上方内容
     const distanceToBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
-    const isNearBottom = distanceToBottom < 60;
+    const isNearBottom = distanceToBottom < 120;
 
     if (isNearBottom) {
       requestAnimationFrame(() => {

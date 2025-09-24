@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  REGISTRY_IMAGE: ${{ env.REGISTRY_IMAGE }}
+  REGISTRY_IMAGE: turiya001/meralobe
   PR_TAG_PREFIX: pr-
 
 jobs:
